@@ -1,0 +1,1934 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Strata Plunge — Hand-Drawn Geology Quiz</title>
+  <!-- Hand-lettered sketchbook fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Architects+Daughter&family=Patrick+Hand&display=swap" rel="stylesheet" />
+
+  <style>
+    /* ==========================================================================
+       HAND-DRAWN FIELD NOTEBOOK DESIGN SYSTEM & RESET
+       ========================================================================== */
+    :root {
+      --paper-bg: #f6f1e3;
+      --paper-card: #fcf9f0;
+      --paper-dark: #ebe2cd;
+      --ink: #231f20;
+      --ink-muted: #5a534a;
+      --pencil-grid: rgba(83, 118, 148, 0.14);
+      --accent-gold: #f4b942;
+      --accent-rust: #d9534f;
+      --accent-moss: #4e8d63;
+      --accent-sky: #4a89dc;
+      --accent-magma: #e85d2a;
+      --sketch-shadow: 4px 5px 0px var(--ink);
+      --sketch-shadow-sm: 2px 3px 0px var(--ink);
+      --font-display: 'Architects Daughter', 'Comic Sans MS', cursive, sans-serif;
+      --font-body: 'Patrick Hand', 'Comic Sans MS', cursive, sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      font-family: var(--font-body);
+      color: var(--ink);
+      background-color: var(--paper-bg);
+      /* Hand-drawn graph-paper & subtle speckled notebook texture */
+      background-image:
+        radial-gradient(rgba(35, 31, 32, 0.04) 1px, transparent 0),
+        linear-gradient(to right, var(--pencil-grid) 1px, transparent 1px),
+        linear-gradient(to bottom, var(--pencil-grid) 1px, transparent 1px);
+      background-size: 16px 16px, 24px 24px, 24px 24px;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      padding: 12px;
+      overflow-x: hidden;
+    }
+
+    /* Organic sketchy borders */
+    .sketch-box {
+      background: var(--paper-card);
+      border: 3px solid var(--ink);
+      border-radius: 255px 15px 225px 15px / 15px 225px 15px 255px;
+      box-shadow: var(--sketch-shadow);
+      position: relative;
+    }
+
+    .sketch-box-alt {
+      background: var(--paper-card);
+      border: 3px solid var(--ink);
+      border-radius: 18px 245px 16px 235px / 235px 16px 245px 18px;
+      box-shadow: var(--sketch-shadow);
+      position: relative;
+    }
+
+    /* Hand-drawn buttons */
+    .sketch-btn {
+      font-family: var(--font-display);
+      font-weight: 700;
+      font-size: 1.15rem;
+      color: var(--ink);
+      background: var(--paper-card);
+      border: 3px solid var(--ink);
+      border-radius: 225px 14px 245px 16px / 16px 245px 14px 225px;
+      box-shadow: var(--sketch-shadow-sm);
+      padding: 12px 22px;
+      cursor: pointer;
+      transition: transform 0.12s ease, box-shadow 0.12s ease, background-color 0.15s ease;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      user-select: none;
+    }
+
+    .sketch-btn:hover:not(:disabled) {
+      transform: translate(-2px, -2px) rotate(-0.5deg);
+      box-shadow: 5px 6px 0px var(--ink);
+      background: #fffdf7;
+    }
+
+    .sketch-btn:active:not(:disabled) {
+      transform: translate(2px, 2px);
+      box-shadow: 1px 1px 0px var(--ink);
+    }
+
+    .sketch-btn:disabled {
+      opacity: 0.65;
+      cursor: not-allowed;
+    }
+
+    .sketch-btn-primary {
+      background: var(--accent-gold);
+    }
+    .sketch-btn-primary:hover:not(:disabled) {
+      background: #f8c65c;
+    }
+
+    .sketch-btn-danger {
+      background: var(--accent-rust);
+      color: #fffdf8;
+    }
+
+    /* ==========================================================================
+       HEADER BAR
+       ========================================================================== */
+    .top-bar {
+      width: 100%;
+      max-width: 1020px;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 14px;
+      padding: 10px 16px;
+    }
+
+    .brand-title {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .brand-title h1 {
+      font-family: var(--font-display);
+      font-size: clamp(1.35rem, 3vw, 1.85rem);
+      letter-spacing: 0.5px;
+      line-height: 1.1;
+    }
+
+    .brand-badge {
+      font-size: 0.85rem;
+      background: var(--paper-dark);
+      border: 2px dashed var(--ink);
+      padding: 2px 8px;
+      border-radius: 12px;
+      transform: rotate(-2deg);
+    }
+
+    .top-controls {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .record-pill {
+      font-size: 1rem;
+      background: var(--paper-dark);
+      border: 2px solid var(--ink);
+      border-radius: 14px;
+      padding: 5px 12px;
+      font-weight: bold;
+    }
+
+    .mute-btn {
+      padding: 6px 12px;
+      font-size: 0.95rem;
+    }
+
+    /* ==========================================================================
+       SCREENS CONTAINER
+       ========================================================================== */
+    .main-stage {
+      width: 100%;
+      max-width: 1020px;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .screen {
+      display: none;
+      width: 100%;
+      animation: pageFlip 0.3s ease-out;
+    }
+
+    .screen.active {
+      display: block;
+    }
+
+    @keyframes pageFlip {
+      from {
+        opacity: 0;
+        transform: translateY(8px) rotate(0.4deg);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0) rotate(0deg);
+      }
+    }
+
+    /* ==========================================================================
+       START SCREEN
+       ========================================================================== */
+    .start-card {
+      padding: clamp(20px, 4vw, 38px);
+      text-align: center;
+      max-width: 760px;
+      margin: 12px auto;
+    }
+
+    .hero-sketch {
+      width: 170px;
+      height: 150px;
+      margin: 0 auto 12px;
+    }
+
+    .start-card h2 {
+      font-family: var(--font-display);
+      font-size: clamp(1.8rem, 4.5vw, 2.6rem);
+      margin-bottom: 8px;
+    }
+
+    .subtitle {
+      font-size: 1.25rem;
+      color: var(--ink-muted);
+      max-width: 580px;
+      margin: 0 auto 22px;
+      line-height: 1.4;
+    }
+
+    .rules-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 14px;
+      margin-bottom: 26px;
+      text-align: left;
+    }
+
+    .rule-note {
+      background: var(--paper-bg);
+      border: 2px solid var(--ink);
+      border-radius: 14px 220px 14px 220px / 220px 14px 220px 14px;
+      padding: 14px;
+      box-shadow: 2px 3px 0 var(--ink);
+    }
+
+    .rule-note:nth-child(2) {
+      transform: rotate(0.7deg);
+    }
+    .rule-note:nth-child(3) {
+      transform: rotate(-0.6deg);
+    }
+
+    .rule-note h3 {
+      font-family: var(--font-display);
+      font-size: 1.1rem;
+      margin-bottom: 4px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .rule-note p {
+      font-size: 1.05rem;
+      line-height: 1.35;
+      color: var(--ink-muted);
+    }
+
+    .start-cta {
+      font-size: 1.4rem;
+      padding: 14px 34px;
+    }
+
+    /* ==========================================================================
+       ACTIVE GAMEPLAY LAYOUT
+       ========================================================================== */
+    .game-layout {
+      display: grid;
+      grid-template-columns: 270px 1fr;
+      gap: 16px;
+      align-items: stretch;
+    }
+
+    @media (max-width: 780px) {
+      .game-layout {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* Left Panel: Hand-Drawn Drill Shaft & Strata Cross-Section */
+    .shaft-panel {
+      padding: 14px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    .shaft-header {
+      text-align: center;
+      border-bottom: 2px dashed var(--ink);
+      padding-bottom: 8px;
+    }
+
+    .shaft-header h3 {
+      font-family: var(--font-display);
+      font-size: 1.15rem;
+    }
+
+    .shaft-svg-wrap {
+      width: 100%;
+      height: 360px;
+      position: relative;
+      border: 3px solid var(--ink);
+      border-radius: 14px;
+      overflow: hidden;
+      background: #d8ecf8;
+    }
+
+    @media (max-width: 780px) {
+      .shaft-svg-wrap {
+        height: 210px;
+      }
+    }
+
+    .shaft-svg-wrap svg {
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+
+    .telemetry-box {
+      background: var(--paper-bg);
+      border: 2px solid var(--ink);
+      border-radius: 12px;
+      padding: 8px 10px;
+      font-size: 0.98rem;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 6px;
+    }
+
+    .telemetry-item span {
+      display: block;
+      font-size: 0.82rem;
+      color: var(--ink-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .telemetry-item strong {
+      font-family: var(--font-display);
+      font-size: 1.02rem;
+    }
+
+    /* Right Panel: Depth Odometer & Question Card */
+    .quiz-panel {
+      padding: clamp(16px, 3vw, 26px);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 16px;
+    }
+
+    .depth-banner {
+      background: var(--paper-dark);
+      border: 3px solid var(--ink);
+      border-radius: 18px 220px 16px 220px / 220px 16px 220px 18px;
+      padding: 12px 18px;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    .depth-readout {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .depth-label {
+      font-size: 0.9rem;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      color: var(--ink-muted);
+      font-weight: bold;
+    }
+
+    .depth-number {
+      font-family: var(--font-display);
+      font-size: clamp(1.65rem, 4vw, 2.35rem);
+      font-weight: 700;
+      line-height: 1.1;
+      color: var(--ink);
+    }
+
+    .depth-sub {
+      font-size: 0.98rem;
+      color: var(--ink-muted);
+    }
+
+    .layer-badge-wrap {
+      text-align: right;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 4px;
+    }
+
+    @media (max-width: 520px) {
+      .layer-badge-wrap {
+        align-items: flex-start;
+        text-align: left;
+      }
+    }
+
+    .layer-pill {
+      font-family: var(--font-display);
+      font-size: 1rem;
+      padding: 5px 12px;
+      border: 2.5px solid var(--ink);
+      border-radius: 14px;
+      background: var(--accent-gold);
+      box-shadow: 2px 2px 0 var(--ink);
+    }
+
+    .tier-tag {
+      font-size: 0.95rem;
+      color: var(--ink-muted);
+      font-weight: bold;
+    }
+
+    /* Progress Steps Track (1 to 18) */
+    .step-track {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      flex-wrap: wrap;
+    }
+
+    .step-pip {
+      flex: 1;
+      min-width: 12px;
+      height: 11px;
+      border: 2px solid var(--ink);
+      border-radius: 4px;
+      background: var(--paper-bg);
+      transition: background-color 0.25s ease, transform 0.2s ease;
+    }
+
+    .step-pip.done {
+      background: var(--accent-moss);
+    }
+
+    .step-pip.current {
+      background: var(--accent-gold);
+      transform: scaleY(1.3);
+    }
+
+    .step-pip.core {
+      border-color: var(--accent-rust);
+    }
+
+    /* Question Prompt */
+    .question-box {
+      padding: 6px 2px;
+    }
+
+    .question-meta {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+      font-size: 1rem;
+      color: var(--ink-muted);
+    }
+
+    .next-depth-preview {
+      background: #e9f5ec;
+      border: 2px dashed var(--accent-moss);
+      color: #265436;
+      padding: 2px 10px;
+      border-radius: 12px;
+      font-weight: bold;
+    }
+
+    .question-text {
+      font-family: var(--font-display);
+      font-size: clamp(1.2rem, 2.6vw, 1.5rem);
+      line-height: 1.38;
+      color: var(--ink);
+    }
+
+    /* Multiple Choice Options */
+    .options-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    @media (max-width: 620px) {
+      .options-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .option-btn {
+      text-align: left;
+      justify-content: flex-start;
+      padding: 14px 16px;
+      font-family: var(--font-body);
+      font-size: 1.18rem;
+      font-weight: 600;
+      line-height: 1.3;
+      min-height: 60px;
+      position: relative;
+    }
+
+    .option-letter {
+      font-family: var(--font-display);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 30px;
+      height: 30px;
+      border: 2px solid var(--ink);
+      border-radius: 50%;
+      background: var(--paper-dark);
+      margin-right: 10px;
+      font-size: 1rem;
+      flex-shrink: 0;
+    }
+
+    .option-btn.correct-flash {
+      background: #bce8c8 !important;
+      border-color: #1f5c32 !important;
+      transform: scale(1.01);
+    }
+
+    .option-btn.wrong-flash {
+      background: #f7c3c1 !important;
+      border-color: #8f1d1a !important;
+    }
+
+    /* Quick Geological Flash Toast on Correct Answer */
+    .strata-flash {
+      min-height: 34px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 6px 12px;
+      border-radius: 12px;
+      background: var(--paper-bg);
+      border: 2px dashed rgba(35, 31, 32, 0.35);
+      font-size: 1.02rem;
+      color: var(--ink-muted);
+    }
+
+    /* ==========================================================================
+       LOSE SCREEN (SUDDEN DEATH + GEOLOGICAL EXPLANATION)
+       ========================================================================== */
+    .end-card {
+      max-width: 780px;
+      margin: 10px auto;
+      padding: clamp(20px, 4vw, 34px);
+    }
+
+    .end-header {
+      text-align: center;
+      margin-bottom: 18px;
+    }
+
+    .end-header h2 {
+      font-family: var(--font-display);
+      font-size: clamp(1.85rem, 4vw, 2.5rem);
+      margin-bottom: 4px;
+    }
+
+    .lose-title {
+      color: var(--accent-rust);
+    }
+
+    .win-title {
+      color: #b85d00;
+    }
+
+    .stats-strip {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+
+    .stat-tile {
+      background: var(--paper-bg);
+      border: 2.5px solid var(--ink);
+      border-radius: 14px;
+      padding: 12px;
+      text-align: center;
+      box-shadow: 2px 3px 0 var(--ink);
+    }
+
+    .stat-tile .stat-label {
+      font-size: 0.9rem;
+      color: var(--ink-muted);
+      text-transform: uppercase;
+    }
+
+    .stat-tile .stat-val {
+      font-family: var(--font-display);
+      font-size: 1.35rem;
+      font-weight: bold;
+      margin-top: 2px;
+    }
+
+    /* Field Notebook Explanation Box */
+    .notebook-explanation {
+      background: #fffdf5;
+      border: 3px solid var(--ink);
+      border-left: 10px solid var(--accent-rust);
+      border-radius: 12px 20px 18px 12px;
+      padding: 18px 20px;
+      margin-bottom: 22px;
+      box-shadow: 3px 4px 0 var(--ink);
+    }
+
+    .notebook-explanation h3 {
+      font-family: var(--font-display);
+      font-size: 1.2rem;
+      margin-bottom: 8px;
+      color: var(--accent-rust);
+    }
+
+    .missed-q {
+      font-weight: bold;
+      font-size: 1.15rem;
+      margin-bottom: 10px;
+    }
+
+    .answer-comparison {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+
+    .ans-chip {
+      padding: 5px 12px;
+      border-radius: 10px;
+      border: 2px solid var(--ink);
+      font-size: 1.02rem;
+    }
+
+    .ans-chip.yours {
+      background: #f9d6d5;
+    }
+
+    .ans-chip.right {
+      background: #cdeed6;
+      font-weight: bold;
+    }
+
+    .explanation-body {
+      font-size: 1.14rem;
+      line-height: 1.45;
+      color: var(--ink);
+      background: var(--paper-bg);
+      padding: 12px 14px;
+      border-radius: 10px;
+      border: 1.5px dashed var(--ink);
+    }
+
+    .end-actions {
+      display: flex;
+      justify-content: center;
+      gap: 14px;
+      flex-wrap: wrap;
+    }
+
+    /* ==========================================================================
+       HAND-DRAWN ANIMATIONS
+       ========================================================================== */
+    @keyframes drillRattle {
+      0%, 100% { transform: translate(0px, 0px) rotate(0deg); }
+      25% { transform: translate(-1.5px, 1px) rotate(-1deg); }
+      50% { transform: translate(1.5px, -1px) rotate(1deg); }
+      75% { transform: translate(-1px, -1px) rotate(-0.5deg); }
+    }
+
+    @keyframes drillPlunge {
+      0% { transform: translateY(0px) scale(1); }
+      35% { transform: translateY(14px) scale(0.96, 1.06); }
+      70% { transform: translateY(-4px) scale(1.03, 0.97); }
+      100% { transform: translateY(0px) scale(1); }
+    }
+
+    @keyframes screenShake {
+      0%, 100% { transform: translateX(0); }
+      20% { transform: translateX(-8px) rotate(-0.5deg); }
+      40% { transform: translateX(8px) rotate(0.5deg); }
+      60% { transform: translateX(-6px); }
+      80% { transform: translateX(6px); }
+    }
+
+    .rattle-idle {
+      animation: drillRattle 0.45s infinite linear;
+      transform-origin: center;
+    }
+
+    .plunge-anim {
+      animation: drillPlunge 0.48s ease-out;
+    }
+
+    .shake-anim {
+      animation: screenShake 0.42s ease-in-out;
+    }
+
+    @keyframes corePulse {
+      0%, 100% { transform: scale(1); opacity: 0.9; }
+      50% { transform: scale(1.08); opacity: 1; }
+    }
+
+    .core-glow {
+      animation: corePulse 2s infinite ease-in-out;
+      transform-origin: center;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ========================================================================
+       TOP FIELD NOTEBOOK HEADER
+       ======================================================================== -->
+  <header class="top-bar sketch-box">
+    <div class="brand-title">
+      <!-- Hand-drawn Drill Icon -->
+      <svg width="36" height="36" viewBox="0 0 48 48" fill="none" aria-hidden="true">
+        <path d="M14 6 H34 L32 22 H16 Z" fill="#f4b942" stroke="#231f20" stroke-width="3" stroke-linejoin="round"/>
+        <path d="M16 22 L32 22 L24 44 Z" fill="#b8b2a6" stroke="#231f20" stroke-width="3" stroke-linejoin="round"/>
+        <path d="M18 28 L29 26 M19 33 L27 31 M21 38 L25 37" stroke="#231f20" stroke-width="2.5" stroke-linecap="round"/>
+        <circle cx="24" cy="14" r="3.5" fill="#4a89dc" stroke="#231f20" stroke-width="2"/>
+      </svg>
+      <div>
+        <h1>STRATA PLUNGE</h1>
+      </div>
+      <span class="brand-badge">Field Log #6371</span>
+    </div>
+
+    <div class="top-controls">
+      <div class="record-pill" id="bestDepthBadge">Best: 0 m</div>
+      <button type="button" class="sketch-btn mute-btn" id="muteToggleBtn" aria-label="Toggle Sound">
+        🔊 Sound On
+      </button>
+    </div>
+  </header>
+
+  <main class="main-stage">
+
+    <!-- ======================================================================
+         1. START SCREEN
+         ====================================================================== -->
+    <section id="startScreen" class="screen active">
+      <div class="start-card sketch-box-alt">
+        <!-- Hand-drawn Earth Core & Drill Sketch -->
+        <svg class="hero-sketch" viewBox="0 0 200 175" fill="none" aria-hidden="true">
+          <!-- Concentric sketched Earth cutaway -->
+          <path d="M25 145 A78 78 0 0 1 175 145" fill="#8b6b4a" stroke="#231f20" stroke-width="3" stroke-linecap="round"/>
+          <path d="M40 145 A62 62 0 0 1 160 145" fill="#d96b38" stroke="#231f20" stroke-width="2.5" stroke-dasharray="6 4"/>
+          <path d="M58 145 A43 43 0 0 1 142 145" fill="#f39c38" stroke="#231f20" stroke-width="2.5"/>
+          <path d="M78 145 A22 22 0 0 1 122 145" fill="#fff1a8" stroke="#231f20" stroke-width="2.5"/>
+          <line x1="18" y1="145" x2="182" y2="145" stroke="#231f20" stroke-width="3" stroke-linecap="round"/>
+
+          <!-- Plunging Drill Capsule -->
+          <g class="rattle-idle">
+            <rect x="88" y="14" width="24" height="26" rx="5" fill="#f4b942" stroke="#231f20" stroke-width="3"/>
+            <circle cx="100" cy="26" r="5" fill="#7ec4cf" stroke="#231f20" stroke-width="2"/>
+            <polygon points="88,40 112,40 100,66" fill="#9ea3a8" stroke="#231f20" stroke-width="3" stroke-linejoin="round"/>
+            <line x1="91" y1="47" x2="108" y2="45" stroke="#231f20" stroke-width="2.5"/>
+            <line x1="94" y1="54" x2="105" y2="52" stroke="#231f20" stroke-width="2.5"/>
+            <!-- Speed lines -->
+            <line x1="78" y1="18" x2="78" y2="38" stroke="#231f20" stroke-width="2" stroke-linecap="round"/>
+            <line x1="122" y1="16" x2="122" y2="36" stroke="#231f20" stroke-width="2" stroke-linecap="round"/>
+          </g>
+        </svg>
+
+        <h2>Drill to the Center of the Earth!</h2>
+        <p class="subtitle">
+          Answer 18 escalating geology questions in a row. Every right answer rockets your subterranean capsule exponentially deeper—from topsoil all the way to the solid iron-nickel Inner Core at <strong>6,371,000 meters</strong>!
+        </p>
+
+        <div class="rules-grid">
+          <div class="rule-note">
+            <h3>📉 Exponential Plunge</h3>
+            <p>Start at the surface (0 m). Early answers dig tens of meters; deep mantle &amp; core questions plunge thousands of kilometers!</p>
+          </div>
+          <div class="rule-note">
+            <h3>💀 Sudden Death</h3>
+            <p>One wrong answer snaps your drill bit and ends the expedition immediately—with a field-note breakdown of what went wrong.</p>
+          </div>
+          <div class="rule-note">
+            <h3>🧭 4 Mastery Tiers</h3>
+            <p>Progress from rocks &amp; minerals to plate tectonics, seismic waves, and extreme high-pressure core physics.</p>
+          </div>
+        </div>
+
+        <button type="button" class="sketch-btn sketch-btn-primary start-cta" id="startBtn">
+          ⛏️ Ignite Drill &amp; Begin
+        </button>
+      </div>
+    </section>
+
+    <!-- ======================================================================
+         2. ACTIVE GAMEPLAY SCREEN
+         ====================================================================== -->
+    <section id="gameScreen" class="screen">
+      <div class="game-layout" id="gameLayoutContainer">
+
+        <!-- Left Column: Hand-Drawn Cross-Section Shaft -->
+        <aside class="shaft-panel sketch-box">
+          <div class="shaft-header">
+            <h3>Subterranean Borehole</h3>
+            <small id="progressFraction">Question 1 of 18</small>
+          </div>
+
+          <div class="shaft-svg-wrap" id="shaftViewport">
+            <svg id="boreholeSvg" viewBox="0 0 240 360" preserveAspectRatio="none" aria-label="Geological depth cross section">
+              <!-- Sky & Surface Grass -->
+              <rect x="0" y="0" width="240" height="32" fill="#d9eefb"/>
+              <path d="M0 32 Q30 26 60 32 T120 32 T180 32 T240 32 L240 46 L0 46 Z" fill="#77b255" stroke="#231f20" stroke-width="2"/>
+
+              <!-- Layer 1: Topsoil & Sedimentary (0 - 500m) -->
+              <rect x="0" y="46" width="240" height="38" fill="#9e7652" stroke="#231f20" stroke-width="2"/>
+              <path d="M10 62 H75 M130 70 H210 M40 76 H110" stroke="#5e4229" stroke-width="2" stroke-linecap="round" stroke-dasharray="8 6"/>
+
+              <!-- Layer 2: Crust (500m - 35,000m) -->
+              <rect x="0" y="84" width="240" height="48" fill="#7e7a74" stroke="#231f20" stroke-width="2"/>
+              <path d="M20 98 L45 104 L70 96 M140 112 L175 106 L210 116" stroke="#474440" stroke-width="2" fill="none"/>
+
+              <!-- Layer 3: Upper Mantle & Asthenosphere (35km - 660km) -->
+              <rect x="0" y="132" width="240" height="58" fill="#c85a32" stroke="#231f20" stroke-width="2"/>
+              <path d="M15 155 Q50 145 85 155 T155 155 T225 155" stroke="#8c3314" stroke-width="2" fill="none"/>
+
+              <!-- Layer 4: Lower Mantle & D'' Layer (660km - 2,890km) -->
+              <rect x="0" y="190" width="240" height="62" fill="#e07a2e" stroke="#231f20" stroke-width="2"/>
+              <path d="M10 218 Q60 228 110 218 T230 218" stroke="#a64b12" stroke-width="2" fill="none"/>
+
+              <!-- Layer 5: Outer Core Liquid Iron-Nickel (2,890km - 5,150km) -->
+              <rect x="0" y="252" width="240" height="56" fill="#f5a623" stroke="#231f20" stroke-width="2"/>
+              <path d="M20 278 Q55 268 90 278 T160 278 T230 278" stroke="#c97408" stroke-width="2.5" fill="none"/>
+
+              <!-- Layer 6: Inner Core Solid Iron-Nickel (5,150km - 6,371km) -->
+              <rect x="0" y="308" width="240" height="52" fill="#fff099" stroke="#231f20" stroke-width="2"/>
+              <circle cx="120" cy="356" r="24" fill="#ffffff" opacity="0.65" class="core-glow"/>
+
+              <!-- Central Borehole Shaft Cutout -->
+              <rect x="96" y="32" width="48" height="328" fill="#2d2622" opacity="0.72"/>
+              <line x1="96" y1="32" x2="96" y2="360" stroke="#231f20" stroke-width="2.5" stroke-dasharray="5 3"/>
+              <line x1="144" y1="32" x2="144" y2="360" stroke="#231f20" stroke-width="2.5" stroke-dasharray="5 3"/>
+
+              <!-- Stratum Labels -->
+              <text x="8" y="68" font-family="Patrick Hand, sans-serif" font-size="11" fill="#fffdf8" font-weight="bold">Topsoil</text>
+              <text x="8" y="110" font-family="Patrick Hand, sans-serif" font-size="11" fill="#fffdf8" font-weight="bold">Crust</text>
+              <text x="8" y="162" font-family="Patrick Hand, sans-serif" font-size="11" fill="#fffdf8" font-weight="bold">Upper Mantle</text>
+              <text x="8" y="222" font-family="Patrick Hand, sans-serif" font-size="11" fill="#fffdf8" font-weight="bold">Lower Mantle</text>
+              <text x="8" y="282" font-family="Patrick Hand, sans-serif" font-size="11" fill="#231f20" font-weight="bold">Outer Core</text>
+              <text x="8" y="338" font-family="Patrick Hand, sans-serif" font-size="11" fill="#231f20" font-weight="bold">Inner Core</text>
+
+              <!-- Dynamic Drill Capsule Group (Y position updated by JS) -->
+              <g id="drillGroup" transform="translate(120, 26)">
+                <g id="drillBody" class="rattle-idle">
+                  <!-- Capsule body -->
+                  <rect x="-12" y="-18" width="24" height="22" rx="5" fill="#f4b942" stroke="#231f20" stroke-width="2.5"/>
+                  <!-- Porthole -->
+                  <circle cx="0" cy="-7" r="4.5" fill="#7ec4cf" stroke="#231f20" stroke-width="2"/>
+                  <!-- Drill bit -->
+                  <polygon points="-12,4 12,4 0,24" fill="#d0cdc7" stroke="#231f20" stroke-width="2.5" stroke-linejoin="round"/>
+                  <line x1="-8" y1="10" x2="7" y2="8" stroke="#231f20" stroke-width="2"/>
+                  <line x1="-5" y1="16" x2="4" y2="14" stroke="#231f20" stroke-width="2"/>
+                </g>
+              </g>
+            </svg>
+          </div>
+
+          <div class="telemetry-box">
+            <div class="telemetry-item">
+              <span>Est. Temp</span>
+              <strong id="tempReadout">15 °C</strong>
+            </div>
+            <div class="telemetry-item">
+              <span>Pressure</span>
+              <strong id="pressureReadout">0.0001 GPa</strong>
+            </div>
+          </div>
+        </aside>
+
+        <!-- Right Column: Question Card & Depth Odometer -->
+        <div class="quiz-panel sketch-box-alt">
+          <!-- Odometer & Current Geological Layer -->
+          <div class="depth-banner">
+            <div class="depth-readout">
+              <span class="depth-label">Current Borehole Depth</span>
+              <div class="depth-number" id="currentDepthDisplay">0 m</div>
+              <div class="depth-sub" id="currentKmDisplay">Surface Level • Target: 6,371,000 m</div>
+            </div>
+
+            <div class="layer-badge-wrap">
+              <span class="layer-pill" id="layerBadge">Topsoil &amp; Sedimentary Strata</span>
+              <span class="tier-tag" id="tierBadge">Tier 1 • Surface &amp; Rocks</span>
+            </div>
+          </div>
+
+          <!-- 18-Step Exponential Progress Pips -->
+          <div class="step-track" id="stepTrack" aria-label="18 steps to Earth's core"></div>
+
+          <!-- Question Area -->
+          <div class="question-box">
+            <div class="question-meta">
+              <span id="questionNumberLabel"><strong>Field Query #1</strong></span>
+              <span class="next-depth-preview" id="nextTargetBadge">Correct → Plunge to 75 m</span>
+            </div>
+            <p class="question-text" id="questionText">Loading geological survey...</p>
+          </div>
+
+          <!-- 4 Multiple Choice Buttons -->
+          <div class="options-grid" id="optionsContainer"></div>
+
+          <!-- Status Footer / Last Fact Note -->
+          <div class="strata-flash" id="statusBar">
+            <span>⚠️ Sudden Death: One wrong answer ends the dive!</span>
+            <span id="streakLabel">Streak: 0 / 18</span>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ======================================================================
+         3. SUDDEN DEATH LOSE SCREEN (WITH GEOLOGICAL EXPLANATION)
+         ====================================================================== -->
+    <section id="loseScreen" class="screen">
+      <div class="end-card sketch-box">
+        <div class="end-header">
+          <svg width="74" height="64" viewBox="0 0 80 70" fill="none" aria-hidden="true">
+            <rect x="24" y="6" width="32" height="24" rx="5" fill="#d9534f" stroke="#231f20" stroke-width="3"/>
+            <polygon points="24,30 56,30 43,46 35,42" fill="#9ea3a8" stroke="#231f20" stroke-width="3" stroke-linejoin="round"/>
+            <polygon points="36,48 45,51 40,64" fill="#9ea3a8" stroke="#231f20" stroke-width="3" stroke-linejoin="round"/>
+            <path d="M16 44 L26 48 M64 42 L54 47" stroke="#d9534f" stroke-width="3" stroke-linecap="round"/>
+          </svg>
+          <h2 class="lose-title">Drill Bit Shattered!</h2>
+          <p class="subtitle" style="margin-bottom: 0;">Your capsule hit an unexpected geological hazard.</p>
+        </div>
+
+        <div class="stats-strip">
+          <div class="stat-tile">
+            <div class="stat-label">Final Depth</div>
+            <div class="stat-val" id="loseDepthVal">0 m</div>
+          </div>
+          <div class="stat-tile">
+            <div class="stat-label">Stratum Reached</div>
+            <div class="stat-val" id="loseLayerVal" style="font-size: 1.08rem;">Topsoil</div>
+          </div>
+          <div class="stat-tile">
+            <div class="stat-label">Questions Solved</div>
+            <div class="stat-val" id="loseStreakVal">0 / 18</div>
+          </div>
+        </div>
+
+        <!-- Detailed Field Notebook Explanation -->
+        <div class="notebook-explanation">
+          <h3>📓 Geologist's Field Debrief</h3>
+          <p class="missed-q" id="loseQuestionText"></p>
+          <div class="answer-comparison">
+            <span class="ans-chip yours" id="loseYourAns">Your Answer: —</span>
+            <span class="ans-chip right" id="loseRightAns">Correct Answer: —</span>
+          </div>
+          <div class="explanation-body" id="loseExplanationText"></div>
+        </div>
+
+        <div class="end-actions">
+          <button type="button" class="sketch-btn sketch-btn-primary" id="retryBtn">
+            🔄 Forge New Drill &amp; Dig Again
+          </button>
+          <button type="button" class="sketch-btn" id="homeFromLoseBtn">
+            🏠 Field Camp
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ======================================================================
+         4. CORE VICTORY WIN SCREEN (6,371,000 METERS)
+         ====================================================================== -->
+    <section id="winScreen" class="screen">
+      <div class="end-card sketch-box-alt" style="background: #fff9e6;">
+        <div class="end-header">
+          <svg width="96" height="84" viewBox="0 0 100 90" fill="none" aria-hidden="true">
+            <circle cx="50" cy="45" r="36" fill="#f4b942" stroke="#231f20" stroke-width="3"/>
+            <circle cx="50" cy="45" r="24" fill="#fff3b0" stroke="#231f20" stroke-width="2.5" class="core-glow"/>
+            <polygon points="50,18 56,34 73,34 59,44 64,60 50,50 36,60 41,44 27,34 44,34" fill="#e85d2a" stroke="#231f20" stroke-width="2.5" stroke-linejoin="round"/>
+          </svg>
+          <h2 class="win-title">INNER CORE REACHED!</h2>
+          <p class="subtitle" style="margin-bottom: 0;">
+            Extraordinary! You answered all 18 geology challenges without a single mistake and plunged <strong>6,371,000 meters</strong> to the very heart of Planet Earth!
+          </p>
+        </div>
+
+        <div class="stats-strip">
+          <div class="stat-tile" style="background: #fff3c4;">
+            <div class="stat-label">Maximum Depth</div>
+            <div class="stat-val">6,371,000 m</div>
+          </div>
+          <div class="stat-tile" style="background: #fff3c4;">
+            <div class="stat-label">Destination</div>
+            <div class="stat-val">Solid Inner Core</div>
+          </div>
+          <div class="stat-tile" style="background: #fff3c4;">
+            <div class="stat-label">Core Conditions</div>
+            <div class="stat-val">~5,400 °C • 360 GPa</div>
+          </div>
+        </div>
+
+        <div class="notebook-explanation" style="border-left-color: var(--accent-moss);">
+          <h3 style="color: #265436;">🏆 Chief Planetary Geologist Commendation</h3>
+          <div class="explanation-body">
+            Your capsule now rests inside Earth's solid iron-nickel sphere—roughly the size of the Moon, heated to temperatures rivaling the surface of the Sun, yet kept solid by 3.6 million atmospheres of crushing pressure. Ready to map another borehole?
+          </div>
+        </div>
+
+        <div class="end-actions">
+          <button type="button" class="sketch-btn sketch-btn-primary" id="playAgainWinBtn">
+            ⛏️ Drill Another Borehole
+          </button>
+          <button type="button" class="sketch-btn" id="homeFromWinBtn">
+            🏠 Field Camp
+          </button>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <script>
+    /* ==========================================================================
+       1. EXPONENTIAL DEPTH PROGRESSION CURVE (18 STEPS TO 6,371,000 METERS)
+       ========================================================================== */
+    const DEPTH_MILESTONES = [
+      0,          // Start (Surface)
+      65,         // Q1  - Topsoil
+      180,        // Q2  - Topsoil
+      460,        // Q3  - Sedimentary Strata
+      1250,       // Q4  - Upper Crust (1.25 km)
+      3400,       // Q5  - Continental Crust (3.4 km)
+      9200,       // Q6  - Deep Crust (9.2 km)
+      24500,      // Q7  - Lower Crust near Moho (24.5 km)
+      64000,      // Q8  - Upper Mantle / Lithosphere (64 km)
+      165000,     // Q9  - Asthenosphere (165 km)
+      410000,     // Q10 - Mantle Transition Zone (410 km)
+      890000,     // Q11 - Lower Mantle (890 km)
+      1650000,    // Q12 - Mid Lower Mantle (1,650 km)
+      2750000,    // Q13 - Deep Lower Mantle / D'' Layer (2,750 km)
+      3650000,    // Q14 - Outer Core Liquid Iron (3,650 km)
+      4550000,    // Q15 - Deep Outer Core (4,550 km)
+      5280000,    // Q16 - Outer/Inner Core Boundary - Lehmann (5,280 km)
+      5890000,    // Q17 - Deep Inner Core (5,890 km)
+      6371000     // Q18 - Center of the Earth (6,371,000 m / 6,371 km)
+    ];
+
+    /* ==========================================================================
+       2. GEOLOGICAL LAYERS METADATA
+       ========================================================================== */
+    const EARTH_LAYERS = [
+      {
+        name: "Topsoil & Sedimentary Strata",
+        min: 0,
+        max: 500,
+        color: "#c89d6c",
+        tempStart: 15,
+        tempEnd: 30,
+        pressStart: 0.0001,
+        pressEnd: 0.015,
+        svgYTop: 46,
+        svgYBottom: 84
+      },
+      {
+        name: "Continental & Oceanic Crust",
+        min: 500,
+        max: 35000,
+        color: "#b8b2a6",
+        tempStart: 30,
+        tempEnd: 850,
+        pressStart: 0.015,
+        pressEnd: 1.0,
+        svgYTop: 84,
+        svgYBottom: 132
+      },
+      {
+        name: "Upper Mantle & Asthenosphere",
+        min: 35000,
+        max: 660000,
+        color: "#e88864",
+        tempStart: 850,
+        tempEnd: 1900,
+        pressStart: 1.0,
+        pressEnd: 24.0,
+        svgYTop: 132,
+        svgYBottom: 190
+      },
+      {
+        name: "Lower Mantle & D'' Layer",
+        min: 660000,
+        max: 2890000,
+        color: "#f2a45a",
+        tempStart: 1900,
+        tempEnd: 3700,
+        pressStart: 24.0,
+        pressEnd: 136.0,
+        svgYTop: 190,
+        svgYBottom: 252
+      },
+      {
+        name: "Outer Core (Liquid Iron-Nickel)",
+        min: 2890000,
+        max: 5150000,
+        color: "#f7c454",
+        tempStart: 3700,
+        tempEnd: 5000,
+        pressStart: 136.0,
+        pressEnd: 330.0,
+        svgYTop: 252,
+        svgYBottom: 308
+      },
+      {
+        name: "Inner Core (Solid Iron-Nickel)",
+        min: 5150000,
+        max: 6371000,
+        color: "#fff099",
+        tempStart: 5000,
+        tempEnd: 5400,
+        pressStart: 330.0,
+        pressEnd: 364.0,
+        svgYTop: 308,
+        svgYBottom: 348
+      }
+    ];
+
+    /* ==========================================================================
+       3. CURATED 40-QUESTION GEOLOGY BANK (4 ESCALATING TIERS)
+       ========================================================================== */
+    const QUESTION_BANK = [
+      // ---------------------- TIER 1 (Q1 - Q4): Surface, Rocks & Minerals ----------------------
+      {
+        tier: 1,
+        question: "Which of the three major rock types forms directly from the cooling and solidification of magma or lava?",
+        options: ["Igneous rock", "Sedimentary rock", "Metamorphic rock", "Evaporite rock"],
+        answer: 0,
+        explanation: "Igneous rocks crystallize from molten rock. Slow cooling underground produces coarse-grained intrusive rocks like granite, whereas rapid surface cooling forms fine-grained extrusive rocks like basalt."
+      },
+      {
+        tier: 1,
+        question: "On the Mohs scale of mineral hardness, which mineral defines hardness 10 and can scratch all other natural minerals?",
+        options: ["Quartz", "Corundum", "Diamond", "Topaz"],
+        answer: 2,
+        explanation: "Diamond sits at the top of the Mohs scale (10) because each carbon atom is locked in a rigid three-dimensional tetrahedral lattice of strong covalent bonds."
+      },
+      {
+        tier: 1,
+        question: "Which sedimentary rock is composed primarily of calcium carbonate (calcite) and often forms from marine shells and coral skeletons?",
+        options: ["Basalt", "Limestone", "Obsidian", "Gneiss"],
+        answer: 1,
+        explanation: "Limestone is rich in calcium carbonate (CaCO₃), mostly accumulated from the shells, skeletons, and tests of ancient marine organisms in warm, shallow seas."
+      },
+      {
+        tier: 1,
+        question: "What do geologists call the color of a mineral's powder when rubbed across an unglazed porcelain plate?",
+        options: ["Luster", "Cleavage", "Streak", "Fracture"],
+        answer: 2,
+        explanation: "Streak is far more reliable for mineral identification than outward color because powdering removes trace impurities and structural light-scattering effects."
+      },
+      {
+        tier: 1,
+        question: "Which dark, fine-grained volcanic rock makes up the vast majority of Earth's oceanic crust?",
+        options: ["Granite", "Basalt", "Sandstone", "Marble"],
+        answer: 1,
+        explanation: "Basalt is a mafic (iron- and magnesium-rich) extrusive igneous rock erupted along mid-ocean ridges to form the upper layer of oceanic crust."
+      },
+      {
+        tier: 1,
+        question: "When limestone is subjected to intense heat and pressure during metamorphism, what rock does it transform into?",
+        options: ["Slate", "Quartzite", "Marble", "Shale"],
+        answer: 2,
+        explanation: "Heat and pressure cause the calcite crystals in limestone to recrystallize and interlock into dense, non-foliated marble."
+      },
+      {
+        tier: 1,
+        question: "Which soil horizon—rich in organic humus and decomposed plant matter—forms the uppermost dark layer of fertile topsoil?",
+        options: ["O and A horizons", "C horizon (regolith)", "R horizon (bedrock)", "E leached zone only"],
+        answer: 0,
+        explanation: "The O horizon (organic litter) and A horizon (topsoil) contain the highest concentration of humus and biological activity at the Earth's surface."
+      },
+      {
+        tier: 1,
+        question: "Why does pumice float on water despite being made of solid volcanic glass?",
+        options: ["It is composed of frozen methane", "It contains countless trapped gas vesicles", "Its minerals repel water molecules", "It has metallic magnetism"],
+        answer: 1,
+        explanation: "During explosive eruptions, dissolved gases rapidly exsolve from frothy lava and freeze in place as tiny bubbles (vesicles), giving pumice a bulk density lower than water."
+      },
+      {
+        tier: 1,
+        question: "Which common silicate mineral is most resistant to chemical weathering at Earth's surface and therefore dominates most beach sands?",
+        options: ["Olivine", "Halite", "Quartz", "Biotite mica"],
+        answer: 2,
+        explanation: "Quartz (SiO₂) has strong silicon-oxygen bonds throughout its framework structure and lacks cleavage planes, allowing it to survive long transport as durable sand grains."
+      },
+      {
+        tier: 1,
+        question: "What property describes a mineral's tendency to break smoothly along flat, parallel planes of atomic weakness?",
+        options: ["Specific gravity", "Cleavage", "Effervescence", "Striation"],
+        answer: 1,
+        explanation: "Cleavage occurs along crystallographic planes where chemical bonds are weakest—such as the single perfect basal cleavage plane that lets mica peel into thin sheets."
+      },
+
+      // ---------------------- TIER 2 (Q5 - Q9): Plate Tectonics, Faults & Stratigraphy ----------------------
+      {
+        tier: 2,
+        question: "According to the Principle of Superposition in undisturbed sedimentary rock layers, where are the oldest strata located?",
+        options: ["At the very top", "At the very bottom", "In the middle layer", "Along vertical dikes"],
+        answer: 1,
+        explanation: "Nicolas Steno's Principle of Superposition states that in an undeformed sequence of sedimentary rocks, each layer is younger than the one beneath it and older than the one above."
+      },
+      {
+        tier: 2,
+        question: "At which type of tectonic plate boundary does dense oceanic lithosphere sink beneath a lighter plate into the mantle?",
+        options: ["Divergent mid-ocean ridge", "Transform fault boundary", "Convergent subduction zone", "Continental rift valley"],
+        answer: 2,
+        explanation: "At convergent subduction zones, colder, denser oceanic lithosphere bends and descends into the asthenosphere, generating deep ocean trenches, megathrust earthquakes, and volcanic arcs."
+      },
+      {
+        tier: 2,
+        question: "What type of fault occurs when compressional tectonic forces push the hanging wall block UP relative to the footwall block?",
+        options: ["Normal fault", "Reverse (or thrust) fault", "Strike-slip fault", "Detachment fissure"],
+        answer: 1,
+        explanation: "Horizontal compression shortens the crust and forces the hanging wall upward over the footwall along a reverse fault (called a thrust fault if the dip angle is gentle, <45°)."
+      },
+      {
+        tier: 2,
+        question: "Why are shield volcanoes like Mauna Loa in Hawaii broad and gently sloping rather than steep-sided cones?",
+        options: ["They erupt low-viscosity basaltic lava", "They form exclusively underwater", "They erupt solid ash without lava", "Glaciers flatten their peaks every winter"],
+        answer: 0,
+        explanation: "Hot, mafic basaltic magma has low silica content and low viscosity, allowing lava flows to travel tens of kilometers before solidifying into wide, gentle slopes."
+      },
+      {
+        tier: 2,
+        question: "Which seismic waves travel fastest through Earth's crust and are the first to be recorded by a seismograph?",
+        options: ["Love waves", "Rayleigh waves", "S-waves (Secondary)", "P-waves (Primary)"],
+        answer: 3,
+        explanation: "P-waves are compressional (longitudinal) body waves that push and pull rock particles in the direction of wave travel, moving faster than shear (S) waves and surface waves."
+      },
+      {
+        tier: 2,
+        question: "What is an 'index fossil' used for in stratigraphy?",
+        options: ["Measuring current magma temperature", "Correlating the relative age of rock layers across wide regions", "Determining the magnetic polarity of iron", "Calculating groundwater pH"],
+        answer: 1,
+        explanation: "Ideal index fossils (such as ammonites or trilobites) lived over a brief, well-defined span of geologic time and were geographically widespread, making them precise age markers."
+      },
+      {
+        tier: 2,
+        question: "What geological feature forms when a river meander is cut off from the main channel due to erosion and deposition?",
+        options: ["Moraine", "Oxbow lake", "Caldera", "Fjord"],
+        answer: 1,
+        explanation: "Erosion on the outer banks narrows the neck of a meander loop until the river breaches through during high flow, sealing off the old crescent bend as an oxbow lake."
+      },
+      {
+        tier: 2,
+        question: "Which boundary separates Earth's crust from the underlying denser peridotite of the upper mantle?",
+        options: ["Gutenberg discontinuity", "Lehmann discontinuity", "Mohorovičić discontinuity (Moho)", "Conrad boundary"],
+        answer: 2,
+        explanation: "Discovered by Andrija Mohorovičić in 1909 from a sharp jump in seismic wave velocities, the Moho marks the compositional transition from crust to mantle."
+      },
+      {
+        tier: 2,
+        question: "California's San Andreas Fault is a classic example of which type of plate boundary?",
+        options: ["Right-lateral transform boundary", "Divergent spreading center", "Ocean-ocean subduction zone", "Continental collision suture"],
+        answer: 0,
+        explanation: "Along the San Andreas transform boundary, the Pacific Plate slides northwestward past the North American Plate horizontally without creating or destroying lithosphere."
+      },
+      {
+        tier: 2,
+        question: "What term describes the mechanical and chemical breakdown of rocks in place at or near Earth's surface (distinct from transport)?",
+        options: ["Lithification", "Weathering", "Subduction", "Metasomatism"],
+        answer: 1,
+        explanation: "Weathering weakens and alters rock in situ via freeze-thaw, root wedging, hydrolysis, and oxidation; erosion is the subsequent removal and transport of that debris."
+      },
+
+      // ---------------------- TIER 3 (Q10 - Q14): Mineralogy, Petrology & Geophysics ----------------------
+      {
+        tier: 3,
+        question: "In Bowen's Reaction Series, which silicate mineral is the FIRST to crystallize from a cooling mafic magma at high temperatures (~1,200 °C)?",
+        options: ["Quartz", "Muscovite mica", "Olivine", "Potassium feldspar"],
+        answer: 2,
+        explanation: "Olivine crystallizes first on the discontinuous branch of Bowen's Reaction Series at the highest temperatures, featuring isolated silica tetrahedra bonded with iron and magnesium."
+      },
+      {
+        tier: 3,
+        question: "What type of unconformity represents a gap in the geologic record where horizontal sedimentary strata lie directly atop eroded igneous or metamorphic basement rock?",
+        options: ["Disconformity", "Nonconformity", "Angular unconformity", "Paraconformity"],
+        answer: 1,
+        explanation: "A nonconformity occurs when sedimentary layers are deposited over much older, deeply eroded crystalline igneous or metamorphic rock, representing immense missing time."
+      },
+      {
+        tier: 3,
+        question: "Why does the asthenosphere behave plastically and flow slowly over geologic time despite being mostly solid rock?",
+        options: ["It is composed entirely of liquid mercury", "Temperatures approach the rock's melting point (peridotite solidus)", "Ocean water lubricates it at 200 km depth", "Magnetic fields levitate the grains"],
+        answer: 1,
+        explanation: "Between ~100 and 350 km depth, high temperature relative to pressure brings peridotite close to its solidus (with trace partial melt), drastically lowering its effective viscosity."
+      },
+      {
+        tier: 3,
+        question: "Which metamorphic facies—characterized by high pressure and unusually low temperatures—forms specifically inside cold subducting oceanic slabs?",
+        options: ["Blueschist facies", "Hornfels facies", "Granulite facies", "Zeolite facies"],
+        answer: 0,
+        explanation: "Subducting slabs heat up much slower than pressure increases, producing high-P / low-T blueschist facies rocks rich in the blue sodic amphibole mineral glaucophane."
+      },
+      {
+        tier: 3,
+        question: "What key observation proved that Earth's Outer Core is liquid rather than solid?",
+        options: ["P-waves accelerate tenfold at 2,890 km", "S-waves cannot pass through it, creating an S-wave shadow zone", "Volcanoes erupt pure liquid nickel", "Ocean tides reverse every 100 years"],
+        answer: 1,
+        explanation: "Shear waves (S-waves) require a rigid medium with shear strength to propagate. Their complete disappearance beyond ~103° epicentral distance proves the outer core is fluid."
+      },
+      {
+        tier: 3,
+        question: "In structural geology, what is an upward-arching fold whose oldest rock layers are exposed along its central hinge axis?",
+        options: ["Syncline", "Anticline", "Monocline", "Graben"],
+        answer: 1,
+        explanation: "An anticline arches upward like an 'A'; once erosion planes off the crest, the oldest strata sit in the core of the fold flanked by progressively younger limbs."
+      },
+      {
+        tier: 3,
+        question: "What causes 'flux melting' of the mantle wedge above a subducting oceanic plate?",
+        options: ["Friction from rapid sliding alone", "Release of water and volatiles from hydrous minerals in the slab", "Radioactive decay of uranium in seawater", "Lightning strikes along trenches"],
+        answer: 1,
+        explanation: "As the subducting slab heats under pressure, hydrous minerals dehydrate and release water into the overlying hot asthenosphere, lowering peridotite's melting point."
+      },
+      {
+        tier: 3,
+        question: "Which radioactive isotope pair is most commonly used to date zircon crystals in Earth's oldest continental crust (over 4 billion years old)?",
+        options: ["Carbon-14 to Nitrogen-14", "Uranium-238 to Lead-206", "Potassium-40 to Calcium-40", "Tritium to Helium-3"],
+        answer: 1,
+        explanation: "Zircon incorporates uranium into its crystal lattice while strongly excluding lead during formation, and U-238's 4.47-billion-year half-life makes it ideal for ancient rocks."
+      },
+      {
+        tier: 3,
+        question: "What is 'graded bedding' in a turbidite sedimentary deposit, and what does it indicate?",
+        options: ["Alternating red and white salt bands from evaporation", "Grain size decreasing upward from coarse sand to fine mud as a current slows", "Fossils sorted strictly by species color", "Vertical cracks caused by desert drying"],
+        answer: 1,
+        explanation: "As a dense submarine turbidity current decelerates, heavy coarse grains settle out first followed by progressively finer silt and clay—a vital 'way-up' indicator."
+      },
+      {
+        tier: 3,
+        question: "What paleomagnetic discovery on the ocean floor provided decisive proof for Harry Hess's seafloor spreading hypothesis?",
+        options: ["Symmetric magnetic polarity stripes mirroring mid-ocean ridges", "Compass needles spinning randomly near trenches", "Iron meteorites embedded in coastal cliffs", "Uniform magnetic age across all ocean basins"],
+        answer: 0,
+        explanation: "Vine and Matthews showed that cooling basalt records Earth's geomagnetic reversals in mirror-image bands on opposite sides of mid-ocean ridges as new crust spreads outward."
+      },
+
+      // ---------------------- TIER 4 (Q15 - Q18): Deep Mantle, Core Physics & Discontinuities ----------------------
+      {
+        tier: 4,
+        question: "At roughly 410 km depth in the Mantle Transition Zone, increasing pressure transforms upper-mantle olivine into which denser polymorph?",
+        options: ["Wadsleyite", "Bridgmanite", "Stishovite", "Magnetite"],
+        answer: 0,
+        explanation: "At ~13.5 GPa (~410 km depth), α-olivine converts into β-spinel (wadsleyite), producing a global seismic velocity jump that defines the top of the mantle transition zone."
+      },
+      {
+        tier: 4,
+        question: "Which high-pressure magnesium silicate perovskite mineral makes up roughly 38% of Earth's total volume, making it the most abundant mineral on Earth?",
+        options: ["Ringwoodite", "Bridgmanite", "Ferropericlase", "Kyanite"],
+        answer: 1,
+        explanation: "Named after high-pressure physicist Percy Bridgman, bridgmanite ((Mg,Fe)SiO₃) dominates the Lower Mantle from 660 km down to the D'' layer."
+      },
+      {
+        tier: 4,
+        question: "What marks the 660-kilometer seismic discontinuity separating the Upper Mantle Transition Zone from the Lower Mantle?",
+        options: ["Melting of solid iron into magma", "Breakdown of ringwoodite into bridgmanite and ferropericlase", "Transition from granite to basalt", "Complete disappearance of oxygen atoms"],
+        answer: 1,
+        explanation: "At ~23.5 GPa (660 km depth), γ-olivine (ringwoodite) undergoes an endothermic spinel-to-post-spinel reaction into dense bridgmanite + ferropericlase ((Mg,Fe)O)."
+      },
+      {
+        tier: 4,
+        question: "Which seismic boundary at ~2,890 km depth separates the silicate Lower Mantle from the liquid iron-nickel Outer Core?",
+        options: ["Mohorovičić discontinuity", "Gutenberg discontinuity (CMB)", "Lehmann discontinuity", "Repetti discontinuity"],
+        answer: 1,
+        explanation: "The Core-Mantle Boundary (Gutenberg discontinuity) features the sharpest density contrast inside Earth—jumping from ~5.5 g/cm³ in the D'' mantle to ~9.9 g/cm³ in the liquid core."
+      },
+      {
+        tier: 4,
+        question: "Who discovered the boundary at ~5,150 km depth separating the liquid Outer Core from the solid Inner Core in 1936?",
+        options: ["Inge Lehmann", "Alfred Wegener", "Charles Richter", " Beno Gutenberg"],
+        answer: 0,
+        explanation: "Danish seismologist Inge Lehmann analyzed P-wave reflections arriving inside the expected shadow zone, deducing the existence of a solid inner core."
+      },
+      {
+        tier: 4,
+        question: "What physical mechanism generates Earth's geomagnetic field inside the liquid Outer Core?",
+        options: ["Permanent ferromagnetism of solid iron at 5,000 °C", "Convective and Coriolis-driven motion of electrically conducting liquid iron (the geodynamo)", "Static electricity from mantle earthquakes", "Solar wind trapped beneath the crust"],
+        answer: 1,
+        explanation: "Far above iron's Curie temperature, Earth's magnetic field is sustained by the geodynamo: thermal and compositional convection in swirling, electrically conductive liquid iron-nickel."
+      },
+      {
+        tier: 4,
+        question: "Why is the Inner Core solid despite having a higher temperature (~5,400 °C) than the liquid Outer Core?",
+        options: ["It is made of pure tungsten", "Immense lithostatic pressure (~330–364 GPa) raises iron's melting point above the ambient temperature", "Liquid water cools it from below", "It contains zero nickel"],
+        answer: 1,
+        explanation: "At depths beyond 5,150 km, pressures exceeding 3.3 million atmospheres compress iron-nickel atoms tightly enough that the melting curve rises above Earth's geotherm."
+      },
+      {
+        tier: 4,
+        question: "What is the D'' (D-double-prime) layer located in the bottom ~200 km of the Lower Mantle just above the Core-Mantle Boundary?",
+        options: ["A zone of ancient ocean water", "A thermal and chemical boundary layer featuring post-perovskite and ultra-low velocity zones", "A hollow cavity filled with hydrogen gas", "A layer of pure diamond"],
+        answer: 1,
+        explanation: "The D'' layer is the dynamic interface where heat from the core drives mantle plumes, bridgmanite transforms into post-perovskite, and partial melt creates ultra-low velocity zones."
+      },
+      {
+        tier: 4,
+        question: "Seismic density measurements show Earth's core is ~5–10% less dense than pure iron-nickel alloy. What accounts for this 'core density deficit'?",
+        options: ["Large air pockets trapped during accretion", "Alloyed light elements such as silicon, oxygen, sulfur, carbon, or hydrogen", "Extensive cavities of liquid helium", "Hollow crystal lattices"],
+        answer: 1,
+        explanation: "High-pressure experiments and cosmochemical models confirm that Earth's core contains roughly 5–10 wt% lighter elements (primarily Si, O, S, C, and H) dissolved in iron-nickel."
+      },
+      {
+        tier: 4,
+        question: "What drives 'compositional convection' in Earth's liquid Outer Core as the solid Inner Core slowly crystallizes over geologic time?",
+        options: ["Light elements are expelled at the inner-core boundary and rise buoyantly", "Iron crystals float upward to the crust", "Tidal friction boils the mantle", "Subducted slabs sink into the inner core"],
+        answer: 0,
+        explanation: "As iron-nickel freezes onto the growing solid Inner Core, incompatible light elements (like O, S, and Si) are rejected into the overlying fluid, creating buoyant plumes that power the geodynamo."
+      }
+    ];
+
+    /* ==========================================================================
+       4. WEB AUDIO API HAND-DRAWN SOUND SYNTHESIZER (NO EXTERNAL FILES)
+       ========================================================================== */
+    class SketchAudio {
+      constructor() {
+        this.ctx = null;
+        this.muted = false;
+      }
+
+      ensureCtx() {
+        if (!this.ctx && !this.muted) {
+          const AudioCtx = window.AudioContext || window.webkitAudioContext;
+          if (AudioCtx) this.ctx = new AudioCtx();
+        }
+        if (this.ctx && this.ctx.state === "suspended") {
+          this.ctx.resume();
+        }
+      }
+
+      toggleMute() {
+        this.muted = !this.muted;
+        return this.muted;
+      }
+
+      playPencilTick() {
+        if (this.muted) return;
+        this.ensureCtx();
+        if (!this.ctx) return;
+
+        const now = this.ctx.currentTime;
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+        osc.type = "triangle";
+        osc.frequency.setValueAtTime(520, now);
+        osc.frequency.exponentialRampToValueAtTime(280, now + 0.04);
+
+        gain.gain.setValueAtTime(0.05, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.04);
+
+        osc.connect(gain);
+        gain.connect(this.ctx.destination);
+        osc.start(now);
+        osc.stop(now + 0.045);
+      }
+
+      playDrillPlunge(stepIndex) {
+        if (this.muted) return;
+        this.ensureCtx();
+        if (!this.ctx) return;
+
+        const now = this.ctx.currentTime;
+
+        // Low mechanical drill rumble
+        const rumble = this.ctx.createOscillator();
+        const rumbleGain = this.ctx.createGain();
+        rumble.type = "sawtooth";
+        rumble.frequency.setValueAtTime(115, now);
+        rumble.frequency.exponentialRampToValueAtTime(58, now + 0.28);
+        rumbleGain.gain.setValueAtTime(0.09, now);
+        rumbleGain.gain.exponentialRampToValueAtTime(0.001, now + 0.3);
+        rumble.connect(rumbleGain);
+        rumbleGain.connect(this.ctx.destination);
+        rumble.start(now);
+        rumble.stop(now + 0.31);
+
+        // Ascending celebratory chime scaled by depth
+        const baseFreq = 330 + stepIndex * 22;
+        [1, 1.25].forEach((mult, idx) => {
+          const chime = this.ctx.createOscillator();
+          const chimeGain = this.ctx.createGain();
+          chime.type = "sine";
+          const start = now + 0.08 + idx * 0.08;
+          chime.frequency.setValueAtTime(baseFreq * mult, start);
+          chimeGain.gain.setValueAtTime(0.11, start);
+          chimeGain.gain.exponentialRampToValueAtTime(0.001, start + 0.24);
+          chime.connect(chimeGain);
+          chimeGain.connect(this.ctx.destination);
+          chime.start(start);
+          chime.stop(start + 0.25);
+        });
+      }
+
+      playDrillShatter() {
+        if (this.muted) return;
+        this.ensureCtx();
+        if (!this.ctx) return;
+
+        const now = this.ctx.currentTime;
+        // Descending dissonant crunch
+        [190, 142].forEach((freq, idx) => {
+          const osc = this.ctx.createOscillator();
+          const gain = this.ctx.createGain();
+          osc.type = "sawtooth";
+          const t = now + idx * 0.14;
+          osc.frequency.setValueAtTime(freq, t);
+          osc.frequency.exponentialRampToValueAtTime(52, t + 0.28);
+          gain.gain.setValueAtTime(0.14, t);
+          gain.gain.exponentialRampToValueAtTime(0.001, t + 0.3);
+          osc.connect(gain);
+          gain.connect(this.ctx.destination);
+          osc.start(t);
+          osc.stop(t + 0.31);
+        });
+      }
+
+      playCoreVictory() {
+        if (this.muted) return;
+        this.ensureCtx();
+        if (!this.ctx) return;
+
+        const now = this.ctx.currentTime;
+        const notes = [261.63, 329.63, 392.0, 523.25, 659.25];
+        notes.forEach((freq, i) => {
+          const osc = this.ctx.createOscillator();
+          const gain = this.ctx.createGain();
+          osc.type = "triangle";
+          const t = now + i * 0.11;
+          osc.frequency.setValueAtTime(freq, t);
+          gain.gain.setValueAtTime(0.13, t);
+          gain.gain.exponentialRampToValueAtTime(0.001, t + 0.45);
+          osc.connect(gain);
+          gain.connect(this.ctx.destination);
+          osc.start(t);
+          osc.stop(t + 0.46);
+        });
+      }
+    }
+
+    const sfx = new SketchAudio();
+
+    /* ==========================================================================
+       5. GAME STATE & UTILITY FUNCTIONS
+       ========================================================================== */
+    const TOTAL_STEPS = 18;
+    const STORAGE_KEY = "strata_plunge_best_depth_m";
+
+    let gameState = {
+      step: 0,               // 0..18 (number of questions answered correctly)
+      depth: 0,              // current depth in meters
+      bestDepth: 0,          // personal best in meters
+      runQuestions: [],      // 18 ordered questions for current run
+      locked: false          // prevents double clicks during animation
+    };
+
+    // DOM Cache
+    const screens = {
+      start: document.getElementById("startScreen"),
+      game: document.getElementById("gameScreen"),
+      lose: document.getElementById("loseScreen"),
+      win: document.getElementById("winScreen")
+    };
+
+    const el = {
+      bestDepthBadge: document.getElementById("bestDepthBadge"),
+      muteToggleBtn: document.getElementById("muteToggleBtn"),
+      startBtn: document.getElementById("startBtn"),
+      gameLayoutContainer: document.getElementById("gameLayoutContainer"),
+      progressFraction: document.getElementById("progressFraction"),
+      currentDepthDisplay: document.getElementById("currentDepthDisplay"),
+      currentKmDisplay: document.getElementById("currentKmDisplay"),
+      layerBadge: document.getElementById("layerBadge"),
+      tierBadge: document.getElementById("tierBadge"),
+      stepTrack: document.getElementById("stepTrack"),
+      questionNumberLabel: document.getElementById("questionNumberLabel"),
+      nextTargetBadge: document.getElementById("nextTargetBadge"),
+      questionText: document.getElementById("questionText"),
+      optionsContainer: document.getElementById("optionsContainer"),
+      statusBar: document.getElementById("statusBar"),
+      streakLabel: document.getElementById("streakLabel"),
+      drillGroup: document.getElementById("drillGroup"),
+      drillBody: document.getElementById("drillBody"),
+      tempReadout: document.getElementById("tempReadout"),
+      pressureReadout: document.getElementById("pressureReadout"),
+      // Lose Screen
+      loseDepthVal: document.getElementById("loseDepthVal"),
+      loseLayerVal: document.getElementById("loseLayerVal"),
+      loseStreakVal: document.getElementById("loseStreakVal"),
+      loseQuestionText: document.getElementById("loseQuestionText"),
+      loseYourAns: document.getElementById("loseYourAns"),
+      loseRightAns: document.getElementById("loseRightAns"),
+      loseExplanationText: document.getElementById("loseExplanationText"),
+      retryBtn: document.getElementById("retryBtn"),
+      homeFromLoseBtn: document.getElementById("homeFromLoseBtn"),
+      // Win Screen
+      playAgainWinBtn: document.getElementById("playAgainWinBtn"),
+      homeFromWinBtn: document.getElementById("homeFromWinBtn")
+    };
+
+    function formatMeters(meters) {
+      return `${Math.round(meters).toLocaleString("en-US")} m`;
+    }
+
+    function formatKmSubtext(meters) {
+      if (meters === 0) return "Surface Level • Target: 6,371,000 m";
+      if (meters < 1000) return `${meters} meters below ground • Target: 6,371,000 m`;
+      const km = (meters / 1000).toLocaleString("en-US", {
+        minimumFractionDigits: meters < 10000 ? 2 : 1,
+        maximumFractionDigits: meters < 10000 ? 2 : 1
+      });
+      return `(${km} km deep) • Core Target: 6,371 km`;
+    }
+
+    function getLayerForDepth(depth) {
+      for (let i = 0; i < EARTH_LAYERS.length; i++) {
+        const layer = EARTH_LAYERS[i];
+        if (depth >= layer.min && depth <= layer.max) {
+          return layer;
+        }
+      }
+      return EARTH_LAYERS[EARTH_LAYERS.length - 1];
+    }
+
+    function getTierInfo(questionIndexZeroBased) {
+      const qNum = questionIndexZeroBased + 1;
+      if (qNum <= 4) return { tier: 1, label: "Tier 1 • Surface & Rocks" };
+      if (qNum <= 9) return { tier: 2, label: "Tier 2 • Tectonics & Strata" };
+      if (qNum <= 14) return { tier: 3, label: "Tier 3 • Petrology & Geophysics" };
+      return { tier: 4, label: "Tier 4 • Deep Mantle & Core Physics" };
+    }
+
+    function shuffleArray(arr) {
+      const copy = [...arr];
+      for (let i = copy.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [copy[i], copy[j]] = [copy[j], copy[i]];
+      }
+      return copy;
+    }
+
+    function loadBestDepth() {
+      try {
+        const saved = localStorage.getItem(STORAGE_KEY);
+        gameState.bestDepth = saved ? parseInt(saved, 10) || 0 : 0;
+      } catch (e) {
+        gameState.bestDepth = 0;
+      }
+      el.bestDepthBadge.textContent = `Best: ${formatMeters(gameState.bestDepth)}`;
+    }
+
+    function updateBestDepth(newDepth) {
+      if (newDepth > gameState.bestDepth) {
+        gameState.bestDepth = newDepth;
+        el.bestDepthBadge.textContent = `Best: ${formatMeters(gameState.bestDepth)}`;
+        try {
+          localStorage.setItem(STORAGE_KEY, String(newDepth));
+        } catch (e) {
+          // Ignore storage restrictions
+        }
+      }
+    }
+
+    function switchScreen(screenKey) {
+      Object.values(screens).forEach((s) => s.classList.remove("active"));
+      screens[screenKey].classList.add("active");
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    /* ==========================================================================
+       6. BUILD 18-QUESTION RUN & RENDER GAMEPLAY UI
+       ========================================================================== */
+    function buildRunQuestions() {
+      const t1 = shuffleArray(QUESTION_BANK.filter((q) => q.tier === 1)).slice(0, 4);
+      const t2 = shuffleArray(QUESTION_BANK.filter((q) => q.tier === 2)).slice(0, 5);
+      const t3 = shuffleArray(QUESTION_BANK.filter((q) => q.tier === 3)).slice(0, 5);
+      const t4 = shuffleArray(QUESTION_BANK.filter((q) => q.tier === 4)).slice(0, 4);
+
+      const combined = [...t1, ...t2, ...t3, ...t4];
+
+      // Also shuffle answer option order per question while tracking correct answer
+      return combined.map((q) => {
+        const indexedOptions = q.options.map((text, idx) => ({
+          text,
+          isCorrect: idx === q.answer
+        }));
+        const shuffledOptions = shuffleArray(indexedOptions);
+        return {
+          ...q,
+          shuffledOptions
+        };
+      });
+    }
+
+    function renderStepPips() {
+      el.stepTrack.innerHTML = "";
+      for (let i = 0; i < TOTAL_STEPS; i++) {
+        const pip = document.createElement("div");
+        pip.className = "step-pip";
+        if (i < gameState.step) pip.classList.add("done");
+        if (i === gameState.step) pip.classList.add("current");
+        if (i === TOTAL_STEPS - 1) pip.classList.add("core");
+        pip.title = `Step ${i + 1}: ${formatMeters(DEPTH_MILESTONES[i + 1])}`;
+        el.stepTrack.appendChild(pip);
+      }
+    }
+
+    function updateDrillVisuals(animatePlunge = false) {
+      const depth = gameState.depth;
+      const layer = getLayerForDepth(depth);
+
+      // Interpolate progress within current geological layer for accurate SVG borehole placement
+      const span = Math.max(1, layer.max - layer.min);
+      const ratio = Math.min(1, Math.max(0, (depth - layer.min) / span));
+      const targetY = depth === 0 ? 26 : layer.svgYTop + ratio * (layer.svgYBottom - layer.svgYTop);
+
+      el.drillGroup.style.transition = "transform 0.55s cubic-bezier(0.22, 1, 0.36, 1)";
+      el.drillGroup.setAttribute("transform", `translate(120, ${targetY.toFixed(1)})`);
+
+      if (animatePlunge) {
+        el.drillBody.classList.remove("plunge-anim");
+        void el.drillBody.offsetWidth; // trigger reflow
+        el.drillBody.classList.add("plunge-anim");
+      }
+
+      // Estimate realistic geothermal temperature and pressure
+      const estTemp = Math.round(layer.tempStart + ratio * (layer.tempEnd - layer.tempStart));
+      const estPress = layer.pressStart + ratio * (layer.pressEnd - layer.pressStart);
+
+      el.tempReadout.textContent = `${estTemp.toLocaleString("en-US")} °C`;
+      el.pressureReadout.textContent =
+        estPress < 1
+          ? `${estPress.toFixed(3)} GPa`
+          : `${estPress.toFixed(1)} GPa`;
+
+      // Update Depth & Stratum Badges
+      el.currentDepthDisplay.textContent = formatMeters(depth);
+      el.currentKmDisplay.textContent = formatKmSubtext(depth);
+      el.layerBadge.textContent = layer.name;
+      el.layerBadge.style.backgroundColor = layer.color;
+    }
+
+    function renderCurrentQuestion() {
+      const idx = gameState.step;
+      const qObj = gameState.runQuestions[idx];
+      const tierInfo = getTierInfo(idx);
+      const nextDepth = DEPTH_MILESTONES[idx + 1];
+
+      el.progressFraction.textContent = `Question ${idx + 1} of ${TOTAL_STEPS}`;
+      el.tierBadge.textContent = tierInfo.label;
+      el.questionNumberLabel.innerHTML = `<strong>Field Query #${idx + 1}</strong>`;
+      el.nextTargetBadge.textContent =
+        idx + 1 === TOTAL_STEPS
+          ? `Final Core Dive → 6,371,000 m!`
+          : `Correct → Plunge to ${formatMeters(nextDepth)}`;
+
+      el.questionText.textContent = qObj.question;
+      el.streakLabel.textContent = `Streak: ${idx} / ${TOTAL_STEPS}`;
+
+      renderStepPips();
+
+      // Render 4 hand-drawn option buttons
+      const letters = ["A", "B", "C", "D"];
+      el.optionsContainer.innerHTML = "";
+
+      qObj.shuffledOptions.forEach((opt, optIdx) => {
+        const btn = document.createElement("button");
+        btn.type = "button";
+        btn.className = "sketch-btn option-btn";
+        btn.innerHTML = `<span class="option-letter">${letters[optIdx]}</span><span>${opt.text}</span>`;
+
+        btn.addEventListener("mouseenter", () => sfx.playPencilTick());
+        btn.addEventListener("click", () => handleAnswerSelection(optIdx, btn));
+        el.optionsContainer.appendChild(btn);
+      });
+    }
+
+    function startNewGame() {
+      gameState.step = 0;
+      gameState.depth = 0;
+      gameState.locked = false;
+      gameState.runQuestions = buildRunQuestions();
+
+      el.statusBar.innerHTML = `
+        <span>⚠️ Sudden Death: One wrong answer ends the dive!</span>
+        <span id="streakLabel">Streak: 0 / ${TOTAL_STEPS}</span>
+      `;
+      el.streakLabel = document.getElementById("streakLabel");
+
+      updateDrillVisuals(false);
+      renderCurrentQuestion();
+      switchScreen("game");
+    }
+
+    /* ==========================================================================
+       7. ANSWER EVALUATION (SUDDEN DEATH & EXPONENTIAL DESCENT)
+       ========================================================================== */
+    function handleAnswerSelection(selectedIdx, clickedBtn) {
+      if (gameState.locked) return;
+      gameState.locked = true;
+
+      const currentQ = gameState.runQuestions[gameState.step];
+      const chosenOption = currentQ.shuffledOptions[selectedIdx];
+      const correctOption = currentQ.shuffledOptions.find((o) => o.isCorrect);
+      const allButtons = el.optionsContainer.querySelectorAll("button");
+
+      allButtons.forEach((b) => (b.disabled = true));
+
+      if (chosenOption.isCorrect) {
+        // CORRECT ANSWER: Plunge deeper exponentially!
+        clickedBtn.classList.add("correct-flash");
+        gameState.step += 1;
+        gameState.depth = DEPTH_MILESTONES[gameState.step];
+        updateBestDepth(gameState.depth);
+
+        sfx.playDrillPlunge(gameState.step);
+        updateDrillVisuals(true);
+        renderStepPips();
+
+        el.statusBar.innerHTML = `
+          <span style="color:#1f5c32; font-weight:bold;">✅ Stratum breached! Descending to ${formatMeters(gameState.depth)}...</span>
+          <span>Streak: ${gameState.step} / ${TOTAL_STEPS}</span>
+        `;
+
+        setTimeout(() => {
+          if (gameState.step >= TOTAL_STEPS) {
+            triggerWinScreen();
+          } else {
+            gameState.locked = false;
+            renderCurrentQuestion();
+          }
+        }, 850);
+      } else {
+        // WRONG ANSWER: Sudden Death!
+        clickedBtn.classList.add("wrong-flash");
+        allButtons.forEach((btn, i) => {
+          if (currentQ.shuffledOptions[i].isCorrect) {
+            btn.classList.add("correct-flash");
+          }
+        });
+
+        sfx.playDrillShatter();
+        el.gameLayoutContainer.classList.remove("shake-anim");
+        void el.gameLayoutContainer.offsetWidth;
+        el.gameLayoutContainer.classList.add("shake-anim");
+
+        setTimeout(() => {
+          triggerLoseScreen(currentQ, chosenOption.text, correctOption.text);
+        }, 900);
+      }
+    }
+
+    function triggerLoseScreen(missedQuestionObj, playerAnswerText, correctAnswerText) {
+      const stoppedLayer = getLayerForDepth(gameState.depth);
+
+      el.loseDepthVal.textContent = formatMeters(gameState.depth);
+      el.loseLayerVal.textContent = stoppedLayer.name;
+      el.loseStreakVal.textContent = `${gameState.step} / ${TOTAL_STEPS}`;
+
+      el.loseQuestionText.textContent = `Q${gameState.step + 1}: ${missedQuestionObj.question}`;
+      el.loseYourAns.textContent = `❌ Your Answer: ${playerAnswerText}`;
+      el.loseRightAns.textContent = `✅ Correct Answer: ${correctAnswerText}`;
+      el.loseExplanationText.textContent = missedQuestionObj.explanation;
+
+      switchScreen("lose");
+    }
+
+    function triggerWinScreen() {
+      sfx.playCoreVictory();
+      updateBestDepth(6371000);
+      switchScreen("win");
+    }
+
+    /* ==========================================================================
+       8. EVENT LISTENERS & INITIALIZATION
+       ========================================================================== */
+    el.muteToggleBtn.addEventListener("click", () => {
+      const isMuted = sfx.toggleMute();
+      el.muteToggleBtn.textContent = isMuted ? "🔇 Muted" : "🔊 Sound On";
+    });
+
+    el.startBtn.addEventListener("click", startNewGame);
+    el.retryBtn.addEventListener("click", startNewGame);
+    el.playAgainWinBtn.addEventListener("click", startNewGame);
+
+    el.homeFromLoseBtn.addEventListener("click", () => switchScreen("start"));
+    el.homeFromWinBtn.addEventListener("click", () => switchScreen("start"));
+
+    // Initialize saved high score on load
+    loadBestDepth();
+  </script>
+</body>
+</html>
